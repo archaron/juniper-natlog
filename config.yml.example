@@ -1,0 +1,62 @@
+metrics:
+  disabled: true
+  address: :8090
+
+pprof:
+  disabled: true
+  address: :6060
+
+grpc:
+  disabled: true
+
+
+debug: true
+
+logger:
+  level: debug
+  format: console
+  no_disclaimer: true
+  no_caller: true
+  color: true
+  trace_level: error
+
+api:
+  address: :8888
+
+clickhouse:
+  address:  :9000
+  username: default
+  password: default
+  database: default
+  batch_size: 100000
+  batch_timeout: 60s
+  read_timeout: 30
+  write_timeout: 30
+  debug: false
+
+syslog:
+  address: :5140
+  rules:
+    - name: "JNat"
+      regexp: (\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}):\s(.*?)\{.*?\}\[.*?\]:\s(.*?):\s([0-9\.]+)\s->\s([0-9\.]+):(\d+)-(\d+)\s
+      fields:
+        - name: timestamp
+          type: timestamp
+          layout: "2006-01-02 15:04:05"
+        - name: hostname
+          type: string
+        - name: event
+          type: list
+          default: -1
+          values:
+            JSERVICES_NAT_PORT_BLOCK_RELEASE: 0
+            JSERVICES_NAT_PORT_BLOCK_ALLOC: 1
+        - name: src_ip
+          type: ip2int
+        - name: dst_ip
+          type: ip2int
+        - name: start_port
+          type: uint16
+        - name: end_port
+          type: uint16
+      table: jnat_log
