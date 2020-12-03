@@ -1,0 +1,9 @@
+[main]
+plugins=1
+
+[ovpm]
+name = Natlog yum repository
+baseurl = https://repo.fiberside.ru/natlog/rpm/
+gpgcheck=0
+sslverify=1
+enabled=1
