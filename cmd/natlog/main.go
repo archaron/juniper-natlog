@@ -1,14 +1,15 @@
 package main
 
 import (
+	"os"
+	"time"
+
 	"github.com/archaron/juniper-natlog/misc"
 	"github.com/archaron/juniper-natlog/modules/app"
 	"github.com/im-kulikov/helium"
 	"github.com/spf13/viper"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"go.uber.org/dig"
-	"os"
-	"time"
 )
 
 func defaults(v *viper.Viper) {
@@ -27,11 +28,10 @@ func defaults(v *viper.Viper) {
 	v.SetDefault("api.shutdown_timeout", "10s")
 
 	// syslog listener
-	v.SetDefault("syslog.timeout", 10 * time.Second)
-	v.SetDefault("syslog.shutdown_timeout", 10 * time.Second)
+	v.SetDefault("syslog.timeout", 10*time.Second)
+	v.SetDefault("syslog.shutdown_timeout", 10*time.Second)
 
 	v.SetDefault("syslog.address", ":514")
-
 
 	// logger:
 	v.SetDefault("logger.format", "console")
@@ -44,11 +44,19 @@ func defaults(v *viper.Viper) {
 	v.SetDefault("logger.sampling.thereafter", 100)
 }
 
-
 func main() {
 	c := cli.NewApp()
 	c.Name = misc.Name
 	c.Version = misc.Version
+
+	c.Authors = []*cli.Author{
+		{
+			Name:  "Alexander Tischenko",
+			Email: "tsm@fiberside.ru",
+		},
+	}
+	c.Usage = "NAT logger"
+	c.UsageText = "Used to authenticate remote clients via ubikey OTP"
 
 	// Default action
 	c.Action = func(*cli.Context) error {
@@ -58,7 +66,7 @@ func main() {
 			File:         misc.Config,
 			BuildTime:    misc.Version,
 			BuildVersion: misc.Build,
-			Defaults: defaults,
+			Defaults:     defaults,
 		}, app.Module)
 
 		err = dig.RootCause(err)
